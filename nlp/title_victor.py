@@ -12,14 +12,17 @@ import jieba
 model = KeyedVectors.load_word2vec_format('./statics/model.vec')
 
 #load in the artwork_sample
-file_name = '../data/artwork_sample.csv'
-artworks = pd.read_csv(file_name)
+file_name = '../data/artworkstxt.csv'
+artworks = pd.read_csv(file_name, error_bad_lines=False)
+
+#artworks = artworks[:100]
 
 artworks['title'] = artworks['title'].fillna('无')
 artworks['description'] = artworks['description'].fillna('无')
 
 #load in word frequency
-f = open('./statics/frequency','rb')
+frequency_pickle_addr = './statics/frequency'
+f = open(frequency_pickle_addr,'rb')
 frequency = pickle.load(f)
 f.close()
 
@@ -27,6 +30,7 @@ f.close()
 def title_victor(artworks):
     artworks_vict = [0] * len(artworks)
     for i in range(len(artworks)):
+        if i % 100 == 0: print("{}/{}".format(i, len(artworks)))
         text = artworks.title[i]
 
         try:
@@ -45,10 +49,50 @@ def title_victor(artworks):
                 pass
 
         if len(vic_list) > 0:
-            title_vic = sum(vic_list[j] / (frequency[word_list[j]] + 1000) for j in range(len(vic_list))) / len(vic_list)
+            title_vic = sum(vic_list[j] * 1000/ (frequency[word_list[j]] + 1000) for j in range(len(vic_list))) / len(vic_list)
             artworks_vict[i] = title_vic
-            print(model.similar_by_vector(title_vic, topn=1))
+            #print(model.similar_by_vector(title_vic, topn=1))
         else:
             title_vic = vic_list
             artworks_vict[i] = title_vic
-            print(word_list)
+
+    return artworks_vict, word_list
+
+title_vict, word_list = title_victor(artworks)
+print(type(title_vict))
+
+'''
+这个东西太大了不能pickle，可以尝试将它存成gensim的那种.vec,看一看那样行不行
+f = open('./statics/artworks_vict','wb')
+
+pickle.dump(title_vict,f)
+f.close()
+'''
+
+file_title_vect = './statics/title_vect.vec'
+
+
+def write_title_vect(artwork_vector, word_list, file_title_vect):
+    error_num = 0
+    with open(file_title_vect, 'w', encoding='utf-8') as f:
+        f.write(str(len(artwork_vector)) + ' ' +'300' + '\n')
+        for v in range(len(artwork_vector)):
+            if v % 100 == 0: print("{}/{}".format(v, len(artwork_vector)))
+
+            if not len(artwork_vector[v]) == 300:
+                error_num += 1
+                continue
+
+            array_text = ''
+
+            for vect in artwork_vector[v]:
+                array_text = array_text + ' ' + str(vect)
+
+            text_word = str(v) + array_text + '\n'
+
+           # with open(file_title_vect,'a',encoding='utf-8') as f:
+            f.write(text_word)
+        print('error num:{}'.format(error_num))
+
+
+write_title_vect(title_vict, word_list, file_title_vect)

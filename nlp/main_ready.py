@@ -1,3 +1,5 @@
+import pickle
+
 from nlp.clear_db_text import write_general_text_article
 from nlp.clear_db_text import write_general_text_artwork_info
 
@@ -31,5 +33,37 @@ write_general_text_article(wechat_info,general_file)
 
 derectory_wikitex = get_file_derectory(wikitxt_path,general_file)
 write_general_text(derectory_wikitex,general_file)
+
+print('finish write files')
+
+
+
+
+
+
+
+import fasttext
+
+train_source = general_file
+
+# Skipgram model
+model = fasttext.skipgram(train_source, './statics/model', dim=300)
+print(model.words) # list of words in dictionary
+
+print('finish fasttext train')
+
+
+
+
+from nlp.vocabulary_frequence import get_word_frequency
+
+frequency_pickle_addr = './statics/frequency'
+get_word_frequency(dbtext_file,frequency_pickle_addr)
+
+
+print('finish frequence pickle')
+
+
+
 
 
