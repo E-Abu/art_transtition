@@ -6,6 +6,7 @@ news_info = '../data/newstxt.csv'
 wechat_info = '../data/wechattxt.csv'
 
 general_file = '/Users/eva/Downloads/wikipedia-extractor/extracted/general.txt'
+dbtext_file = '/Users/eva/Downloads/wikipedia-extractor/extracted/db.txt'
 
 
 
@@ -24,7 +25,8 @@ def write_general_text_artwork_info(file_name, file_wt):
                 f2.write(text_word)
     return
 
-write_general_text_artwork_info(artwork_info,general_file)
+#write_general_text_artwork_info(artwork_info,general_file)
+write_general_text_artwork_info(artwork_info,dbtext_file)
 
 
 def write_general_text_article(file_name,file_wt):
@@ -42,7 +44,9 @@ def write_general_text_article(file_name,file_wt):
                 f2.write(text_word)
     return
 
-write_general_text_article(news_info,general_file)
-write_general_text_article(wechat_info,general_file)
+# write_general_text_article(news_info,general_file)
+# write_general_text_article(wechat_info,general_file)
 
+write_general_text_article(news_info,dbtext_file)
+write_general_text_article(wechat_info,dbtext_file)
 

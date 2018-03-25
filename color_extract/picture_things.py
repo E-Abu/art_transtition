@@ -4,7 +4,7 @@ import colorgram
 picture_addr = '../data/art36181394.jpg'
 url = "http://img3.artron.net/auction/old/art8233/d/art82330060.jpg"
 
-lineart_addr = '../data/2fe743fbb2fb43165cad916a21a4462308f7d3fe.jpg'
+lineart_addr = '../data/260342-1503260G31079.jpg'
 
 def pull_picture(url, picture_addr):
     img_data = requests.get(url).content

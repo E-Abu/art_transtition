@@ -8,7 +8,7 @@ from nlp.clear_wiki_text import write_general_text
 
 
 
-artwork_info = '../data/artworkstxt.csv'
+artwork_info = '../data/artworkstxt_info.csv'
 news_info = '../data/newstxt.csv'
 wechat_info = '../data/wechattxt.csv'
 
@@ -18,23 +18,27 @@ general_file = '/Users/eva/Downloads/wikipedia-extractor/extracted/general.txt'
 dbtext_file = '/Users/eva/Downloads/wikipedia-extractor/extracted/db.txt'
 
 
-### db vocabulary 的写入
+### db vocabulary 的写入 用来统计词频
 write_general_text_artwork_info(artwork_info,dbtext_file)
 write_general_text_article(news_info,dbtext_file)
 write_general_text_article(wechat_info,dbtext_file)
 
+print('finish write db file')
 
 
-### genaral vocabulary 的写入
+### genaral vocabulary 的写入 用来训练词向量
+# from shutil import copyfile
+# copyfile(dbtext_file, general_file)
+
 write_general_text_artwork_info(artwork_info,general_file)
 
 write_general_text_article(news_info,general_file)
 write_general_text_article(wechat_info,general_file)
 
-derectory_wikitex = get_file_derectory(wikitxt_path,general_file)
+derectory_wikitex = get_file_derectory(wikitxt_path)
 write_general_text(derectory_wikitex,general_file)
 
-print('finish write files')
+print('finish write wiki files')
 
 
 

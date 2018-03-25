@@ -3,8 +3,9 @@ from gensim.models import KeyedVectors
 
 import pandas as pd
 import pickle
-
 import jieba
+
+from nlp.tool import cut_sentence
 
 
 
@@ -12,13 +13,13 @@ import jieba
 model = KeyedVectors.load_word2vec_format('./statics/model.vec')
 
 #load in the artwork_sample
-file_name = '../data/artworkstxt.csv'
+file_name = '../data/artworkstxt_info.csv'
 artworks = pd.read_csv(file_name, error_bad_lines=False)
 
 #artworks = artworks[:100]
 
-artworks['title'] = artworks['title'].fillna('无')
-artworks['description'] = artworks['description'].fillna('无')
+artworks = artworks.fillna('无')
+
 
 #load in word frequency
 frequency_pickle_addr = './statics/frequency'
@@ -26,12 +27,13 @@ f = open(frequency_pickle_addr,'rb')
 frequency = pickle.load(f)
 f.close()
 
+
 #title vector
 def title_victor(artworks):
     artworks_vict = [0] * len(artworks)
     for i in range(len(artworks)):
         if i % 100 == 0: print("{}/{}".format(i, len(artworks)))
-        text = artworks.title[i]
+        text = artworks[i]
 
         try:
             word_list = list(jieba.cut(text))
@@ -48,6 +50,8 @@ def title_victor(artworks):
             except KeyError:
                 pass
 
+        #vic_list,word_list = cut_sentence(text)
+
         if len(vic_list) > 0:
             title_vic = sum(vic_list[j] * 1000/ (frequency[word_list[j]] + 1000) for j in range(len(vic_list))) / len(vic_list)
             artworks_vict[i] = title_vic
@@ -58,8 +62,8 @@ def title_victor(artworks):
 
     return artworks_vict, word_list
 
-title_vict, word_list = title_victor(artworks)
-print(type(title_vict))
+artworks_vict, word_list = title_victor(artworks.title)
+print(len(artworks_vict))
 
 '''
 这个东西太大了不能pickle，可以尝试将它存成gensim的那种.vec,看一看那样行不行
@@ -72,7 +76,7 @@ f.close()
 file_title_vect = './statics/title_vect.vec'
 
 
-def write_title_vect(artwork_vector, word_list, file_title_vect):
+def write_title_vect(artwork_vector, file_title_vect):
     error_num = 0
     with open(file_title_vect, 'w', encoding='utf-8') as f:
         f.write(str(len(artwork_vector)) + ' ' +'300' + '\n')
@@ -93,6 +97,25 @@ def write_title_vect(artwork_vector, word_list, file_title_vect):
            # with open(file_title_vect,'a',encoding='utf-8') as f:
             f.write(text_word)
         print('error num:{}'.format(error_num))
+    return error_num
 
 
-write_title_vect(title_vict, word_list, file_title_vect)
+error_num = write_title_vect(artworks_vict, file_title_vect)
+
+
+
+# 第一排总数改掉
+import shutil
+
+from_file = open(file_title_vect)
+line = from_file.readline()
+
+line_s = line.split(' ')
+line_s[0] = str(int(line_s[0]) - error_num)
+line = line_s[0] + ' ' + line_s[1]
+
+
+to_file = open(file_title_vect + '_new', mode="w")
+to_file.write(line)
+shutil.copyfileobj(from_file, to_file)
+

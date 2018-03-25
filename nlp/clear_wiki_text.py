@@ -9,7 +9,7 @@ general_file = '/Users/eva/Downloads/wikipedia-extractor/extracted/general.txt'
 def get_file_derectory(path):
     file_paths = []
     for folder in listdir(path):
-        if folder != '.DS_Store' and folder != 'general.txt':
+        if folder != '.DS_Store' and folder != 'general.txt' and folder != 'db.txt':
             path_2nd = path + '/' + folder
             for file_name in listdir(path_2nd):
                 path_3rd = path_2nd + '/' + file_name
