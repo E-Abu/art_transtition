@@ -5,16 +5,19 @@ import pandas as pd
 import pickle
 import jieba
 
-from nlp.tool import cut_sentence
+#from nlp.tool import cut_sentence
 
 
 
 #load in the genaral modle
 model = KeyedVectors.load_word2vec_format('./statics/model.vec')
 
-#load in the artwork_sample
-file_name = '../data/artworkstxt_info.csv'
+#load in the artwork info
+file_name = '../data/artworkstxt_info_west.csv'
 artworks = pd.read_csv(file_name, error_bad_lines=False)
+
+#title vector file addr
+file_title_vect = './statics/title_vect_west.vec'
 
 #artworks = artworks[:100]
 
@@ -73,7 +76,7 @@ pickle.dump(title_vict,f)
 f.close()
 '''
 
-file_title_vect = './statics/title_vect.vec'
+
 
 
 def write_title_vect(artwork_vector, file_title_vect):
