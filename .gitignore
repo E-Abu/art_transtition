@@ -2,3 +2,4 @@
 nlp/statics/*
 .idea/*
 data/
+transhdata/*

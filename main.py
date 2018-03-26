@@ -38,12 +38,12 @@ input_sentence = '欢快'
 
 
 
-to_paint = './data/330805-15032404153760_2.jpg'
-line_art = './data/330805-15032404153760.jpg'
-
-
+topaint_dic = {'Interior design':('./data/330805-15032404153760_2.jpg','./data/330805-15032404153760.jpg'),
+               'fashion design':('./data/58_2.jpg','./data/58.jpg')}
+to_paint, line_art = topaint_dic['Interior design']
 
 '''
+
 -------------------------tools--------------------------
 '''
 def cut_sentence(input_sentence):
@@ -142,7 +142,7 @@ def fill_color_demo(lineart_addr, colors):
             try:
                 #print('fill')
                 cv.floodFill(copyImg, mask, (r_x, r_y), colors[i], (30, 30, 30), (50, 50, 50), cv.FLOODFILL_FIXED_RANGE)
-                if i == len(colors): i = 0
+                if i == len(colors): i = -1
                 i += 1
             except Exception as e: a=1#print(e)
         counter += 1
@@ -165,11 +165,11 @@ def add_alpha_channel(img):
 
 def blend_multiply(file_foreground,file_background):
     # Import background image
-    background_img_float = cv.imread(file_name,-1).astype(float)
+    background_img_float = cv.imread(file_background,-1).astype(float)
     background_img_float = add_alpha_channel(background_img_float)
 
     # Import foreground image
-    foreground_img_float = cv.imread(file_name2,-1).astype(float)
+    foreground_img_float = cv.imread(file_foreground,-1).astype(float)
     foreground_img_float = add_alpha_channel(foreground_img_float)
 
     # Blend images
@@ -193,7 +193,7 @@ def main(input_sentence, to_paint):
 
     info = artworks.loc[int(ID)]
     url = info.image_url
-    #print(info.title,url)
+    print(info.title,url)
 
     pull_picture(url, picture_addr)
 
@@ -204,9 +204,9 @@ def main(input_sentence, to_paint):
     #上色
     fill_color_demo(to_paint, colors)
 
-    file_foreground = './data/预览.jpg'
-    file_background = line_art
-    blend_multiply(file_foreground, file_background)
+    foreground = './data/预览.jpg'
+    background = line_art
+    blend_multiply(foreground, background)
 
     return './data/artwork.jpg',line_art,'./data/预览2.jpg'
 
